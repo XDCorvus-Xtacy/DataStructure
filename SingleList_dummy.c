@@ -78,13 +78,13 @@ void ReleasList(void)
     g_head.next = NULL;
 }
 
-int FindData(char* pszData)
+NODE* FindData(char* pszData)
 {
     NODE* pCur = g_head.next;
     NODE* pPrev = &g_head;
     while (pCur != NULL) {
         if (strcmp(pCur->szData, pszData) == 0)
-            return 1;
+            return pPrev;
         pCur = pCur->next;
         pPrev = pPrev->next;
     }
@@ -94,20 +94,15 @@ int FindData(char* pszData)
 
 int DeleteData(char* pszData)
 {
-    NODE* pCur = g_head.next;
-    NODE* pPrev = &g_head;
-    while (pCur != NULL)
+    NODE* pPrev = FindData(pszData);
+    if (pPrev != 0)
     {
-        if (strcmp(pCur->szData, pszData) == 0) {
-            //삭제
-            printf("DeleteData(): %s\n", pCur->szData);
-            pPrev->next = pCur->next;
-            free(pCur);
-            return 1;
-        }
+        NODE* pDelete = pPrev->next;
+        pPrev->next = pDelete->next;
 
-        pCur = pCur->next;
-        pPrev = pPrev->next;
+        printf("DeleteData(): %s\n", pDelete->szData);
+        free(pDelete);
+        return 1;
     }
 
     return 0;
