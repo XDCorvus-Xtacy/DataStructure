@@ -8,6 +8,7 @@ typedef struct NODE {
 } NODE;
 
 NODE g_head = {0};
+NODE* g_pTail = 0;
 
 
 int HeadIsEmpty()
@@ -37,8 +38,11 @@ int InsertAtHead(char* pszData)
     memset(pNode, 0, sizeof(NODE));
     strcpy(pNode->szData, pszData);
 
-    if (HeadIsEmpty())
+    if (HeadIsEmpty()) {
+        //리스트에 추가된 첫 번째 데이터 처리
         g_head.next = pNode;
+        g_pTail = pNode;
+    }
     else {
         pNode->next = g_head.next;
         g_head.next = pNode;
@@ -49,16 +53,19 @@ int InsertAtHead(char* pszData)
 
 int InsertAtTail(char* pszData)
 {
-    //마지막 노드를 찾는다.
-    NODE* pTmp = &g_head;
-    while (pTmp->next != 0) 
-        pTmp = pTmp->next;
-
     NODE* pNode = (NODE*)malloc(sizeof(NODE));
     memset(pNode, 0 , sizeof(NODE));
     strcpy(pNode->szData, pszData);
 
     pTmp->next = pNode;
+
+    if (HeadIsEmpty())
+        //리스트에 추가된 첫 번째 데이터 처리
+        g_head.next = pNode;
+    else
+        g_pTail->next = pNode;
+
+    g_pTail = pNode;
 
     return 1;
 }
@@ -76,6 +83,7 @@ void ReleasList(void)
     }
 
     g_head.next = NULL;
+    g_pTail = 0;
 }
 
 NODE* FindData(char* pszData)
@@ -101,6 +109,10 @@ int DeleteData(char* pszData)
         pPrev->next = pDelete->next;
 
         printf("DeleteData(): %s\n", pDelete->szData);
+
+        if (pDelete == g_pTail)
+            g_pTail = pPrev->next;
+
         free(pDelete);
         return 1;
     }
