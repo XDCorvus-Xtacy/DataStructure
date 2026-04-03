@@ -9,12 +9,21 @@ typedef struct USERDATA {
     char szPhone[64];
 } USERDATA;
 
+const char* GetKeyFromUserData(void* pUser)
+{
+    USERDATA* p = (USERDATA*)pUser;
+    return p->szName;
+}
+
 
 ///////////////////////////////////////////////////////////////////
 typedef struct NODE {
 
     //관리 대상 자료
-    USERDATA* pData;
+    void* pData;
+
+    //멤버 함수 포인터
+    const char* (*GetKey)(void*);
 
     //자료구조
     struct NODE* prev;
@@ -28,17 +37,20 @@ NODE* g_pTail;
 int g_nSize;
 
 ///////////////////////////////////////////////////////////////////
-void InsertBefore(NODE* pDstNode, USERDATA* pParam);
+void InsertBefore(NODE* pDstNode, void* pParam, const char* (*pfParam)(void*));
+int InsertAtHead(void* pParam, const char* (*pfParam)(void*));
+int InsertAtTail(void* pParam, const char* (*pfParam)(void*));
 
 ///////////////////////////////////////////////////////////////////
-USERDATA* CreateNewData(const char* pszName, const char* pszPhone)
+void CreateUserData(const char* pszName, const char* pszPhone)
 {
     USERDATA* pNewData = (USERDATA*)malloc(sizeof(USERDATA));
     memset(pNewData, 0, sizeof(USERDATA));
+
     strcpy(pNewData->szName, pszName);
     strcpy(pNewData->szPhone, pszPhone);
 
-    return pNewData;
+    InsertAtTail(pNewData, GetKeyFromUserData);
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -83,7 +95,8 @@ void ReleaseList()
         NODE* pDelete = pTmp;
         pTmp = pTmp->next;
 
-        printf("Delete: [%p] %s\n", pDelete, pDelete->pData->szName);
+        printf("Delete: %p\n", 
+            pDelete);
 
         free(pDelete->pData);
         free(pDelete);
@@ -107,8 +120,8 @@ void PrintList(void)
             printf("[DUMMY]\n");
         else 
         {
-            printf("Index:%d %s %s\n", 
-                    i, pTmp->pData->szName, pTmp->pData->szPhone);
+            printf("Index:%d %s\n", 
+                    i, pTmp->GetKey(pTmp->pData));
             ++i;
         } 
         pTmp = pTmp->next;
@@ -119,13 +132,16 @@ void PrintList(void)
 
 ///////////////////////////////////////////////////////////////////
 //pParam: 호출자가 메모리를 동적 할당 + 값 설정까지 해서 전달
-int InsertAtHead(USERDATA* pParam)
+int InsertAtHead(void* pParam, const char* (*pfParam)(void*))
 {
     NODE* pNewNode = (NODE*)malloc(sizeof(NODE));
     memset(pNewNode, 0, sizeof(NODE));
 
+    //관리 대상 자료에 관한 초기화
     pNewNode->pData = pParam;
+    pNewNode->GetKey = pfParam;
 
+    //연결 리스트에 관한 초기화
     pNewNode->prev = g_pHead;
     pNewNode->next = g_pHead->next;
 
@@ -138,19 +154,19 @@ int InsertAtHead(USERDATA* pParam)
 }
 
 ///////////////////////////////////////////////////////////////////
-int InsertAtTail(USERDATA* pParam)
+int InsertAtTail(void* pParam, const char* (*pfParam)(void*))
 {
-    InsertBefore(g_pTail, pParam);
+    InsertBefore(g_pTail, pParam, pfParam);
 
     return g_nSize;
 }
 
 ///////////////////////////////////////////////////////////////////
-NODE* FindNode(const char* pszName)
+NODE* FindNode(const char* pszKey)
 {
     NODE* pTmp = g_pHead->next;
     while (pTmp != g_pTail) {
-        if (strcmp(pTmp->pData->szName, pszName) == 0)
+        if (strcmp(pTmp->GetKey(pTmp->pData), pszKey) == 0)
             return pTmp;
         
         pTmp = pTmp->next;
@@ -160,13 +176,13 @@ NODE* FindNode(const char* pszName)
 }
 
 ///////////////////////////////////////////////////////////////////
-int DeleteNode(const char* pszName)
+int DeleteNode(const char* pszKey)
 {
-    NODE* pNode = FindNode(pszName);
+    NODE* pNode = FindNode(pszKey);
     if (pNode == NULL)
         return 0;
 
-    printf("DeleteNode(): %s (%p)\n", pszName, pNode);
+    printf("DeleteNode(): %s (%p)\n", pszKey, pNode);
 
     pNode->prev->next = pNode->next;
     pNode->next->prev = pNode->prev;
@@ -197,7 +213,7 @@ NODE* GetAt(int idx)
 }
 
 ///////////////////////////////////////////////////////////////////
-void InsertBefore(NODE* pDstNode, USERDATA* pParam)
+void InsertBefore(NODE* pDstNode, void* pParam, const char* (*pfParam)(void*))
 {
     NODE* pPrev = pDstNode->prev;
 
@@ -205,18 +221,19 @@ void InsertBefore(NODE* pDstNode, USERDATA* pParam)
     memset(pNewNode, 0, sizeof(NODE));
 
     pNewNode->pData = pParam;
+    pNewNode->GetKey = pfParam;
     
     pNewNode->prev = pPrev;
     pNewNode->next = pDstNode;
 
-    pDstNode->prev = pNewNode;
     pPrev->next = pNewNode;
+    pDstNode->prev = pNewNode;
 
     g_nSize++;
 }
 
 ///////////////////////////////////////////////////////////////////
-int InsertAt(int idx, USERDATA* pParam)
+int InsertAt(int idx, void* pParam, const char* (*pfParam)(void*))
 {
     int i = 0;
     NODE* pTmp = g_pHead->next;
@@ -224,7 +241,7 @@ int InsertAt(int idx, USERDATA* pParam)
     {
         if (i == idx)
         {
-            InsertBefore(pTmp, pParam);
+            InsertBefore(pTmp, pParam, pfParam);
             return i;
         }
 
@@ -232,7 +249,7 @@ int InsertAt(int idx, USERDATA* pParam)
         ++i;
     }
 
-    InsertAtTail(pParam);
+    InsertAtTail(pParam, pfParam);
     return i;
 }
 
@@ -243,9 +260,8 @@ int main(void)
 {
     InitList();
 
-    USERDATA* pNewData = CreateNewData("Ho-sung", "010-1234-5678");
-    InsertAtTail(pNewData);
-
+    CreateUserData("Ho-sung", "010-1234-5678");
+    CreateUserData("TEST", "010-1111-2222");
 
     PrintList();
     ReleaseList();
