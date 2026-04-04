@@ -4,6 +4,9 @@
 
 
 typedef struct USERDATA {
+
+    //멤버 함수 포인터
+    const char* (*GetKey)(void*);
     
     char szName[64];    //Key
     char szPhone[64];
@@ -22,9 +25,6 @@ typedef struct NODE {
     //관리 대상 자료
     void* pData;
 
-    //멤버 함수 포인터
-    const char* (*GetKey)(void*);
-
     //자료구조
     struct NODE* prev;
     struct NODE* next;
@@ -37,12 +37,12 @@ NODE* g_pTail;
 int g_nSize;
 
 ///////////////////////////////////////////////////////////////////
-void InsertBefore(NODE* pDstNode, void* pParam, const char* (*pfParam)(void*));
-int InsertAtHead(void* pParam, const char* (*pfParam)(void*));
-int InsertAtTail(void* pParam, const char* (*pfParam)(void*));
+void InsertBefore(NODE* pDstNode, void* pParam);
+int InsertAtHead(void* pParam);
+int InsertAtTail(void* pParam);
 
 ///////////////////////////////////////////////////////////////////
-void CreateUserData(const char* pszName, const char* pszPhone)
+USERDATA* CreateUserData(const char* pszName, const char* pszPhone)
 {
     USERDATA* pNewData = (USERDATA*)malloc(sizeof(USERDATA));
     memset(pNewData, 0, sizeof(USERDATA));
@@ -50,7 +50,10 @@ void CreateUserData(const char* pszName, const char* pszPhone)
     strcpy(pNewData->szName, pszName);
     strcpy(pNewData->szPhone, pszPhone);
 
-    InsertAtTail(pNewData, GetKeyFromUserData);
+    //구조체 멤버 함수 초기화
+    pNewData->GetKey = GetKeyFromUserData;
+
+    return pNewData;
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -120,8 +123,9 @@ void PrintList(void)
             printf("[DUMMY]\n");
         else 
         {
+            USERDATA* pUser = pTmp->pData;  //형 불일치 문제 해결
             printf("Index:%d %s\n", 
-                    i, pTmp->GetKey(pTmp->pData));
+                    i, pUser->GetKey(pUser));
             ++i;
         } 
         pTmp = pTmp->next;
@@ -132,14 +136,13 @@ void PrintList(void)
 
 ///////////////////////////////////////////////////////////////////
 //pParam: 호출자가 메모리를 동적 할당 + 값 설정까지 해서 전달
-int InsertAtHead(void* pParam, const char* (*pfParam)(void*))
+int InsertAtHead(void* pParam)
 {
     NODE* pNewNode = (NODE*)malloc(sizeof(NODE));
     memset(pNewNode, 0, sizeof(NODE));
 
     //관리 대상 자료에 관한 초기화
     pNewNode->pData = pParam;
-    pNewNode->GetKey = pfParam;
 
     //연결 리스트에 관한 초기화
     pNewNode->prev = g_pHead;
@@ -154,9 +157,9 @@ int InsertAtHead(void* pParam, const char* (*pfParam)(void*))
 }
 
 ///////////////////////////////////////////////////////////////////
-int InsertAtTail(void* pParam, const char* (*pfParam)(void*))
+int InsertAtTail(void* pParam)
 {
-    InsertBefore(g_pTail, pParam, pfParam);
+    InsertBefore(g_pTail, pParam);
 
     return g_nSize;
 }
@@ -165,8 +168,12 @@ int InsertAtTail(void* pParam, const char* (*pfParam)(void*))
 NODE* FindNode(const char* pszKey)
 {
     NODE* pTmp = g_pHead->next;
-    while (pTmp != g_pTail) {
-        if (strcmp(pTmp->GetKey(pTmp->pData), pszKey) == 0)
+    const char* (*pfGetKey)(void*) = NULL;
+    while (pTmp != g_pTail) 
+    {
+        //관리 대상 데이터 구조체 첫 번째 멤버가 함수 포인터임을 가정
+        pfGetKey = pTmp->pData;
+        if (strcmp(pfGetKey(pTmp->pData), pszKey) == 0)
             return pTmp;
         
         pTmp = pTmp->next;
@@ -213,7 +220,7 @@ NODE* GetAt(int idx)
 }
 
 ///////////////////////////////////////////////////////////////////
-void InsertBefore(NODE* pDstNode, void* pParam, const char* (*pfParam)(void*))
+void InsertBefore(NODE* pDstNode, void* pParam)
 {
     NODE* pPrev = pDstNode->prev;
 
@@ -221,7 +228,6 @@ void InsertBefore(NODE* pDstNode, void* pParam, const char* (*pfParam)(void*))
     memset(pNewNode, 0, sizeof(NODE));
 
     pNewNode->pData = pParam;
-    pNewNode->GetKey = pfParam;
     
     pNewNode->prev = pPrev;
     pNewNode->next = pDstNode;
@@ -233,7 +239,7 @@ void InsertBefore(NODE* pDstNode, void* pParam, const char* (*pfParam)(void*))
 }
 
 ///////////////////////////////////////////////////////////////////
-int InsertAt(int idx, void* pParam, const char* (*pfParam)(void*))
+int InsertAt(int idx, void* pParam)
 {
     int i = 0;
     NODE* pTmp = g_pHead->next;
@@ -241,7 +247,7 @@ int InsertAt(int idx, void* pParam, const char* (*pfParam)(void*))
     {
         if (i == idx)
         {
-            InsertBefore(pTmp, pParam, pfParam);
+            InsertBefore(pTmp, pParam);
             return i;
         }
 
@@ -249,7 +255,7 @@ int InsertAt(int idx, void* pParam, const char* (*pfParam)(void*))
         ++i;
     }
 
-    InsertAtTail(pParam, pfParam);
+    InsertAtTail(pParam);
     return i;
 }
 
@@ -260,8 +266,11 @@ int main(void)
 {
     InitList();
 
-    CreateUserData("Ho-sung", "010-1234-5678");
-    CreateUserData("TEST", "010-1111-2222");
+    USERDATA* pNewData = NULL;
+    pNewData = CreateUserData("Ho-sung", "010-1234-5678");
+    InsertAtTail(pNewData);
+    pNewData = CreateUserData("TEST", "010-1111-2222");
+    InsertAtTail(pNewData);
 
     PrintList();
     ReleaseList();
