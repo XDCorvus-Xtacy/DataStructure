@@ -22,6 +22,7 @@ private:
     std::vector<HashNode*> buckets;   // 버킷 배열 (각 칸이 연결 리스트 시작)
     int bucketCount;                  // 버킷 개수
     int size;                         // 담긴 데이터 개수
+    int hashFunction(std::string key);
 
 public:
     HashTable();                                   // 생성자
