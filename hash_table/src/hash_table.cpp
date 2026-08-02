@@ -32,3 +32,67 @@ int HashTable::hashFunction(std::string key)
 
     return hash % bucketCount;    // 3. bucketCount로 나눈 나머지 리턴
 }
+
+void HashTable::insert(std::string key, int value)
+{
+    int index = hashFunction(key);
+
+    HashNode* current = buckets[index];
+    while (current != nullptr)
+    {
+        if (current->key == key)
+        {
+            current->value = value;
+            return;
+        }
+        current = current->next;
+    }
+
+    HashNode* newNode = new HashNode(key, value);
+    newNode->next = buckets[index];
+    buckets[index] = newNode;
+    size++;
+}
+
+int HashTable::search(std::string key)
+{
+    int index = hashFunction(key);
+    HashNode* current = buckets[index];
+    while (current != nullptr)
+    {
+        if (current->key == key)
+        {
+            return current->value;
+        }
+        current = current->next;
+    }
+    return -1;
+}
+
+void HashTable::remove(std::string key)
+{
+    int index = hashFunction(key);
+    HashNode* current = buckets[index];
+    HashNode* prev = nullptr;
+
+    while (current != nullptr)
+    {
+        if (current->key == key)
+        {
+            if (prev == nullptr)
+            {
+                buckets[index] = current->next;
+            }
+            else
+            {
+                prev->next = current->next;
+            }
+
+            delete current;
+            size--;
+            return;
+        }
+        prev = current;
+        current = current->next;
+    }
+}
