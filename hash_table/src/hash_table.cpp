@@ -21,7 +21,7 @@ HashTable::~HashTable()
     }
 }
 
-int HashTable::hashFunction(std::string key)
+int HashTable::hashFunction(std::string key, int count)
 {
     size_t hash = 0;              // 1. 누적 변수 초기화
 
@@ -30,12 +30,12 @@ int HashTable::hashFunction(std::string key)
         hash = hash * 31 + c;
     }
 
-    return hash % bucketCount;    // 3. bucketCount로 나눈 나머지 리턴
+    return hash % count;          // 3. count로 나눈 나머지 리턴
 }
 
 void HashTable::insert(std::string key, int value)
 {
-    int index = hashFunction(key);
+    int index = hashFunction(key, bucketCount);
 
     HashNode* current = buckets[index];
     while (current != nullptr)
@@ -52,11 +52,16 @@ void HashTable::insert(std::string key, int value)
     newNode->next = buckets[index];
     buckets[index] = newNode;
     size++;
+
+    if (size * 100 > bucketCount * 75)
+    {
+        resize();
+    }
 }
 
 int HashTable::search(std::string key)
 {
-    int index = hashFunction(key);
+    int index = hashFunction(key, bucketCount);
     HashNode* current = buckets[index];
     while (current != nullptr)
     {
@@ -71,7 +76,7 @@ int HashTable::search(std::string key)
 
 void HashTable::remove(std::string key)
 {
-    int index = hashFunction(key);
+    int index = hashFunction(key, bucketCount);
     HashNode* current = buckets[index];
     HashNode* prev = nullptr;
 
@@ -94,5 +99,24 @@ void HashTable::remove(std::string key)
         }
         prev = current;
         current = current->next;
+    }
+}
+
+void HashTable::resize()
+{
+    int newBucketCount = bucketCount * 2;
+    std::vector<HashNode*> newBuckets(newBucketCount, nullptr);
+    
+    for (int i = 0; i < bucketCount; i++)
+    {
+        HashNode* current = buckets[i];
+        while (current != nullptr)
+        {
+            HashNode* nextNode = current->next;
+            int newIndex = hashFunction(current->key, newBucketCount);
+            current->next = newBuckets[newIndex];
+            newBuckets[newIndex] = current;
+            current = nextNode;
+        }
     }
 }
