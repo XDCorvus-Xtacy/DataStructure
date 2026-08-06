@@ -120,3 +120,18 @@ void HashTable::resize()
         }
     }
 }
+
+void HashTable::printData()
+{
+    for (int i = 0; i < bucketCount; i++)
+    {
+        std::cout << "[" << i << "] ";
+        HashNode* current = buckets[i];
+        while (current != nullptr)
+        {
+            std::cout << current->key << "=" << current->value << " ";
+            current = current->next;
+        }
+        std::cout << std::endl;
+    }
+}

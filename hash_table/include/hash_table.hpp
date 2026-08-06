@@ -31,4 +31,6 @@ public:
     int search(std::string key);                   // 찾기
     void remove(std::string key);                  // 지우기
     void resize();
+    void printData();
+    int getBucketCount() { return bucketCount; }
 };
