@@ -120,6 +120,9 @@ void HashTable::resize()
             current = nextNode;
         }
     }
+
+    buckets = newBuckets;
+    bucketCount = newBucketCount;
 }
 
 void HashTable::printData()
