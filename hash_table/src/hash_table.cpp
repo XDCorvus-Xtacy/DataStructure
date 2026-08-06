@@ -1,3 +1,4 @@
+#include <iostream>
 #include "../include/hash_table.hpp"
 
 HashTable::HashTable() 
