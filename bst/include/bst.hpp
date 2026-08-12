@@ -16,6 +16,7 @@ struct TreeNode {
 class BST {
 private:
     TreeNode* root;
+    TreeNode* insertHelper(TreeNode* node, int key);
 
 public:
     BST();
