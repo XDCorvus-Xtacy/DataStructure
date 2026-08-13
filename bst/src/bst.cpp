@@ -17,3 +17,21 @@ TreeNode* BST::insertHelper(TreeNode* node, int key)
 
     return node;
 }
+//////////////////////////////////////////////////////////////
+bool BST::search(int key)
+{
+    return searchHelper(root, key);
+}
+
+//////////////////////////////////////////////////////////////
+bool BST::searchHelper(TreeNode* node, int key)
+{
+    if (node == nullptr)
+        return false;
+    else if (node->key == key)
+        return true;
+    else if (node->key > key)
+        return searchHelper(node->left, key);
+    else
+        return searchHelper(node->right, key);
+}

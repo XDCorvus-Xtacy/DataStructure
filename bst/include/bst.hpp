@@ -17,6 +17,7 @@ class BST {
 private:
     TreeNode* root;
     TreeNode* insertHelper(TreeNode* node, int key);
+    bool searchHelper(TreeNode* node, int key);
 
 public:
     BST();
