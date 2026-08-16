@@ -18,6 +18,9 @@ private:
     TreeNode* root;
     TreeNode* insertHelper(TreeNode* node, int key);
     bool searchHelper(TreeNode* node, int key);
+    void inorderHelper(TreeNode* node);
+    void preorderHelper(TreeNode* node);
+    void postorderHelper(TreeNode* node);
 
 public:
     BST();
@@ -25,4 +28,7 @@ public:
     void insert(int key);
     bool search(int key);
     void remove(int key);
+    void inorder();
+    void preorder();
+    void postorder();
 };
