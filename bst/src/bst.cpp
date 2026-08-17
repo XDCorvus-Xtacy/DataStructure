@@ -11,7 +11,7 @@ BST::BST()
 //////////////////////////////////////////////////////////////
 BST::~BST()
 {
-    // TODO: 모든 노드 해제 (후위 순회 배운 뒤 구현)
+    destroyHelper(root);
 }
 
 //////////////////////////////////////////////////////////////
@@ -107,6 +107,17 @@ void BST::postorderHelper(TreeNode* node)
     postorderHelper(node->left);
     postorderHelper(node->right);
     std::cout << node->key << " ";
+}
+
+//////////////////////////////////////////////////////////////
+void BST::destroyHelper(TreeNode* node)
+{
+    if (node == nullptr)
+        return;
+
+    destroyHelper(node->left);
+    destroyHelper(node->right);
+    delete node;
 }
 
 //////////////////////////////////////////////////////////////

@@ -21,6 +21,7 @@ private:
     void inorderHelper(TreeNode* node);
     void preorderHelper(TreeNode* node);
     void postorderHelper(TreeNode* node);
+    void destroyHelper(TreeNode* node);
 
 public:
     BST();
