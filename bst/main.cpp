@@ -22,5 +22,9 @@ int main()
     tree.postorder();
     std::cout << std::endl;
 
+    std::cout << "레벨 순회: ";
+    tree.levelorder();
+    std::cout << std::endl;
+
     return 0;
 }

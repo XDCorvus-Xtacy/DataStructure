@@ -1,5 +1,6 @@
 // bst.cpp
 #include <iostream>
+#include <queue>
 #include "../include/bst.hpp"
 
 //////////////////////////////////////////////////////////////
@@ -118,6 +119,28 @@ void BST::destroyHelper(TreeNode* node)
     destroyHelper(node->left);
     destroyHelper(node->right);
     delete node;
+}
+
+//////////////////////////////////////////////////////////////
+void BST::levelorder()
+{
+    if (root == nullptr)
+        return;
+
+    std::queue<TreeNode*> q;
+    q.push(root);
+
+    while (!q.empty())
+    {
+        TreeNode* current = q.front();
+        q.pop();
+        std::cout << current->key << " ";
+
+        if (current->left != nullptr)
+            q.push(current->left);
+        if (current->right != nullptr)
+            q.push(current->right);
+    }
 }
 
 //////////////////////////////////////////////////////////////

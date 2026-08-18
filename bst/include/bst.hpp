@@ -32,4 +32,5 @@ public:
     void inorder();
     void preorder();
     void postorder();
+    void levelorder();
 };
