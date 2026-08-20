@@ -11,4 +11,5 @@ public:
     Graph(int n);
     ~Graph();
     void addEdge(int u, int v);
+    void printData();
 };
