@@ -36,3 +36,23 @@ void Graph::printData()
 }
 
 ////////////////////////////////////////////////////////////////////
+void Graph::dfs(int start)
+{
+    std::vector<bool> visited(vertexCount, false);
+    dfsHelper(start, visited);
+}
+
+////////////////////////////////////////////////////////////////////
+void Graph::dfsHelper(int node, std::vector<bool>& visited)
+{
+    visited[node] = true;
+    std::cout << node << " ";
+
+    for (int next : adj[node])
+    {
+        if (!visited[next])
+            dfsHelper(next, visited);
+    }
+}
+
+////////////////////////////////////////////////////////////////////

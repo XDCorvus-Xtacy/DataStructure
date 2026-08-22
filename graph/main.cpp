@@ -10,5 +10,9 @@ int main()
     g.addEdge(2, 3);
 
     g.printData();
+
+    std::cout << "DFS: ";
+    g.dfs(0);
+    std::cout << std::endl;
     return 0;
 }
