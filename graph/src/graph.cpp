@@ -1,5 +1,6 @@
 #include "../include/graph.hpp"
 #include <iostream>
+#include <queue>
 
 ////////////////////////////////////////////////////////////////////
 Graph::Graph(int n)
@@ -38,6 +39,9 @@ void Graph::printData()
 ////////////////////////////////////////////////////////////////////
 void Graph::dfs(int start)
 {
+    if (start < 0 || start >= vertexCount)
+        return;
+
     std::vector<bool> visited(vertexCount, false);
     dfsHelper(start, visited);
 }
@@ -52,6 +56,35 @@ void Graph::dfsHelper(int node, std::vector<bool>& visited)
     {
         if (!visited[next])
             dfsHelper(next, visited);
+    }
+}
+
+////////////////////////////////////////////////////////////////////
+void Graph::bfs(int start)
+{
+    if (start < 0 || start >= vertexCount)
+        return;
+
+    std::vector<bool> visited(vertexCount, false);
+    std::queue<int> q;
+
+    visited[start] = true;
+    q.push(start);
+
+    while (!q.empty())
+    {
+        int cur = q.front();
+        q.pop();
+        std::cout << cur << " ";
+
+        for (int next : adj[cur])
+        {
+            if (!visited[next])
+            {
+                visited[next] = true;
+                q.push(next);
+            }
+        }
     }
 }
 

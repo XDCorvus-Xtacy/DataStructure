@@ -14,4 +14,5 @@ public:
     void addEdge(int u, int v);
     void printData();
     void dfs(int start);
+    void bfs(int start);
 };

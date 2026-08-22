@@ -14,5 +14,10 @@ int main()
     std::cout << "DFS: ";
     g.dfs(0);
     std::cout << std::endl;
+
+    std::cout << "BFS: ";
+    g.bfs(0);
+    std::cout << std::endl;
+
     return 0;
 }
