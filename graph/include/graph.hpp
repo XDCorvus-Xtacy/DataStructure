@@ -15,4 +15,6 @@ public:
     void printData();
     void dfs(int start);
     void bfs(int start);
+    void addDirectedEdge(int u, int v);
+    void topologicalSort();
 };

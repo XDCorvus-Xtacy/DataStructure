@@ -89,3 +89,57 @@ void Graph::bfs(int start)
 }
 
 ////////////////////////////////////////////////////////////////////
+void Graph::addDirectedEdge(int u, int v)
+{
+    adj[u].push_back(v);
+}
+
+////////////////////////////////////////////////////////////////////
+void Graph::topologicalSort()
+{
+    std::vector<int> inDegree(vertexCount, 0);
+
+    for (int u = 0; u < vertexCount; u++)
+    {
+        for (int v : adj[u])
+        {
+            inDegree[v]++;
+        }
+    }
+
+    std::queue<int> q;
+    std::vector<int> result;
+
+    for (int i = 0; i < vertexCount; i++)
+    {
+        if (inDegree[i] == 0)
+            q.push(i);
+    }
+
+    while (!q.empty())
+    {
+        int cur = q.front();
+        q.pop();
+        result.push_back(cur);
+
+        for (int next : adj[cur])
+        {
+            inDegree[next]--;
+
+            if (inDegree[next] == 0)
+                q.push(next);
+        }
+    }
+
+    if (result.size() != vertexCount)
+    {
+        std::cout << "사이클이 존재합니다! (위상 정렬 불가)" << std::endl;
+        return;
+    }
+
+    for (int x : result)
+        std::cout << x << " ";
+    std::cout << std::endl;
+}
+
+////////////////////////////////////////////////////////////////////
