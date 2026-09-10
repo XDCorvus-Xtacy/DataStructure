@@ -16,6 +16,7 @@ class BTree {
 private:
     BTreeNode* root;
     int order;
+    void destroyHelper(BTreeNode* node);
 
 public:
     BTree(int order);      // 차수를 받아서 생성

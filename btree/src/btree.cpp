@@ -1,3 +1,34 @@
+// btree.cpp
 #include "../include/btree.hpp"
 
-// TODO: BTree 구현
+///////////////////////////////////////////////////////////
+BTree::BTree(int order)
+{
+    this->order = order;
+    root = new BTreeNode(true);
+}
+
+///////////////////////////////////////////////////////////
+BTree::~BTree()
+{
+    destroyHelper(root);
+}
+
+///////////////////////////////////////////////////////////
+void BTree::destroyHelper(BTreeNode* node)
+{
+    if (node == nullptr)
+        return;
+
+    for (BTreeNode* child : node->children)
+    {
+        destroyHelper(child);
+    }
+
+    delete node;
+}
+
+///////////////////////////////////////////////////////////
+
+
+///////////////////////////////////////////////////////////

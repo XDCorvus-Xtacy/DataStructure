@@ -1,8 +1,9 @@
+// main.cpp
 #include <iostream>
 #include "include/btree.hpp"
 
 int main()
 {
-    // TODO: BTree 테스트
+    BTree tree(3);    // 차수 3짜리 트리 생성
     return 0;
 }
