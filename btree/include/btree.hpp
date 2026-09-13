@@ -17,12 +17,13 @@ private:
     BTreeNode* root;
     int order;
     void destroyHelper(BTreeNode* node);
+    bool searchHelper(BTreeNode* node, int key);
 
 public:
     BTree(int order);      // 차수를 받아서 생성
     ~BTree();
-    bool search(int key);  // 오늘/다음에 구현할 것
-    void insert(int key);  // 나중에
+    bool search(int key);
+    void insert(int key);
 };
 
 ///////////////////////////////////////////////////////////
