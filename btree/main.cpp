@@ -4,8 +4,13 @@
 
 int main()
 {
-    BTree tree(3);    // 차수 3짜리 트리 생성
-    
-    std::cout << tree.search(10) << std::endl;   // 0 (false) 나와야 함
+    BTree tree(3);
+    tree.insert(30);
+    tree.insert(50);
+
+    std::cout << tree.search(30) << std::endl;   // 1
+    std::cout << tree.search(45) << std::endl;   // 0
+    tree.insert(45);
+    std::cout << tree.search(45) << std::endl;   // 1
     return 0;
 }

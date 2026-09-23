@@ -18,6 +18,7 @@ private:
     int order;
     void destroyHelper(BTreeNode* node);
     bool searchHelper(BTreeNode* node, int key);
+    void insertHelper(BTreeNode* node, int key);
 
 public:
     BTree(int order);      // 차수를 받아서 생성

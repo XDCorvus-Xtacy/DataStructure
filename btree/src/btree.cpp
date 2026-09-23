@@ -51,3 +51,26 @@ bool BTree::searchHelper(BTreeNode* node, int key)
 }
 
 ///////////////////////////////////////////////////////////
+void BTree::insert(int key)
+{
+    insertHelper(root, key);
+}
+
+///////////////////////////////////////////////////////////
+void BTree::insertHelper(BTreeNode* node, int key)
+{
+    size_t i = 0;
+    while (i < node->keys.size() && key > node->keys[i])
+        i++;
+
+    if (node->isLeaf)
+    {
+        node->keys.insert(node->keys.begin() + i, key);
+    }
+    else
+    {
+        insertHelper(node->children[i], key);
+    }
+}
+
+///////////////////////////////////////////////////////////
