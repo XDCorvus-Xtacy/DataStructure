@@ -20,12 +20,15 @@ private:
     bool searchHelper(BTreeNode* node, int key);
     void insertHelper(BTreeNode* node, int key);
     void splitChild(BTreeNode* parent, size_t i);
+    bool isOverflow(BTreeNode* node);
+    void printHelper(BTreeNode* node, int depth);
 
 public:
     BTree(int order);      // 차수를 받아서 생성
     ~BTree();
     bool search(int key);
     void insert(int key);
+    void print();
 };
 
 ///////////////////////////////////////////////////////////

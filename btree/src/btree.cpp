@@ -1,5 +1,6 @@
 // btree.cpp
 #include "../include/btree.hpp"
+#include <iostream>
 
 ///////////////////////////////////////////////////////////
 BTree::BTree(int order)
@@ -54,6 +55,14 @@ bool BTree::searchHelper(BTreeNode* node, int key)
 void BTree::insert(int key)
 {
     insertHelper(root, key);
+
+    if (isOverflow(root))
+    {
+        BTreeNode* node = new BTreeNode(false);
+        node->children.push_back(root);
+        root = node;
+        splitChild(root, 0);
+    }
 }
 
 ///////////////////////////////////////////////////////////
@@ -70,6 +79,10 @@ void BTree::insertHelper(BTreeNode* node, int key)
     else
     {
         insertHelper(node->children[i], key);
+        if (isOverflow(node->children[i]))
+        {
+            splitChild(node, i);
+        }
     }
 }
 
@@ -103,9 +116,44 @@ void BTree::splitChild(BTreeNode* parent, size_t i)
         child->children.resize(mid+1);
     }
 
-    parent->keys.insert(parent->keys.begin() + i, midKey)
+    parent->keys.insert(parent->keys.begin() + i, midKey);
 
-    parent->children.insert(parent->children.begin() + i+1, right)
+    parent->children.insert(parent->children.begin() + i+1, right);
 }
 
 ///////////////////////////////////////////////////////////
+bool BTree::isOverflow(BTreeNode* node)
+{
+    return node->keys.size() > (size_t)(order - 1);
+}
+
+///////////////////////////////////////////////////////////
+void BTree::print()
+{
+    printHelper(root, 0);
+}
+
+///////////////////////////////////////////////////////////
+void BTree::printHelper(BTreeNode* node, int depth)
+{
+    for (int d = 0; d < depth; d++)
+    {
+        std::cout << "    ";
+    }
+
+    std::cout << "[";
+    for (size_t j = 0; j < node->keys.size(); j++)
+    {
+        std::cout << node->keys[j];
+        if (j + 1 < node->keys.size())
+        {
+            std::cout << "|";
+        }
+    }
+    std::cout << "]" << std::endl;
+
+    for (BTreeNode* child : node->children)
+    {
+        printHelper(child, depth + 1);
+    }
+}
