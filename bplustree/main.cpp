@@ -16,5 +16,7 @@ int main()
 
     std::cout << "search(50): " << tree.search(50) << std::endl;
     std::cout << "search(55): " << tree.search(55) << std::endl;
+
+    tree.printLeaves();
     return 0;
 }

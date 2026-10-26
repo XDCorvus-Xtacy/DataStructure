@@ -7,6 +7,7 @@ struct BTreeNode {
     std::vector<int> keys;
     std::vector<BTreeNode*> children;
     bool isLeaf;
+    BTreeNode* next = nullptr;
 
     BTreeNode(bool leaf) { isLeaf = leaf; }
 };
@@ -29,6 +30,7 @@ public:
     bool search(int key);
     void insert(int key);
     void print();
+    void printLeaves();
 };
 
 ///////////////////////////////////////////////////////////

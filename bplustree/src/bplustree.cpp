@@ -157,3 +157,32 @@ void BTree::printHelper(BTreeNode* node, int depth)
         printHelper(child, depth + 1);
     }
 }
+
+///////////////////////////////////////////////////////////
+void BTree::printLeaves()
+{
+    BTreeNode* pTmp = root;
+
+    while (pTmp->isLeaf != true)
+    {
+        pTmp = pTmp->children[0];
+    }
+
+    while (pTmp != nullptr)
+    {
+        std::cout << "[";
+        for (size_t j = 0; j < pTmp->keys.size(); j++)
+        {
+            std::cout << pTmp->keys[j];
+            if (j + 1 < pTmp->keys.size())
+            {
+                std::cout << "|";
+            }
+        }
+        std::cout << "]" << std::endl;
+
+        pTmp = pTmp->next;
+    }
+}
+
+///////////////////////////////////////////////////////////
