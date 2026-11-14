@@ -96,7 +96,17 @@ void BTree::splitChild(BTreeNode* parent, size_t i)
 
     BTreeNode* right = new BTreeNode(child->isLeaf);
 
-    for (size_t j = mid + 1; j < child->keys.size(); j++)
+    size_t start;
+    if (child->isLeaf)
+    {
+        start = mid;
+    }
+    else
+    {
+        start = mid + 1;
+    }
+
+    for (size_t j = start; j < child->keys.size(); j++)
     {
         right->keys.push_back(child->keys[j]);
     }
@@ -114,6 +124,12 @@ void BTree::splitChild(BTreeNode* parent, size_t i)
     if (!child->isLeaf)
     {
         child->children.resize(mid+1);
+    }
+
+    if (child->isLeaf)
+    {
+        right->next = child->next;
+        child->next = right;
     }
 
     parent->keys.insert(parent->keys.begin() + i, midKey);
