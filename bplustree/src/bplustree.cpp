@@ -38,15 +38,22 @@ bool BTree::search(int key)
 ///////////////////////////////////////////////////////////
 bool BTree::searchHelper(BTreeNode* node, int key)
 {
-    size_t i = 0;
-    while (i < node->keys.size() && key > node->keys[i])
-        i++;
-
-    if (i < node->keys.size() && node->keys[i] == key)
-        return true;
-
+    // 1. 리프에 도착하면: 리프 안에 key가 있는지 확인
     if (node->isLeaf)
+    {
+        for (int k : node->keys)
+        {
+            if (k == key)
+                return true;
+        }
         return false;
+    }
+
+    // 2. 내부 노드: 이정표로 내려갈 자식 고르기
+    //    작으면 왼쪽, 같거나 크면 오른쪽
+    size_t i = 0;
+    while (i < node->keys.size() && key >= node->keys[i])
+        i++;
 
     return searchHelper(node->children[i], key);
 }
