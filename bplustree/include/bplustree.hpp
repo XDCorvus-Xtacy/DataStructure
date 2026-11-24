@@ -31,6 +31,7 @@ public:
     void insert(int key);
     void print();
     void printLeaves();
+    void rangeQuery(int low, int high);
 };
 
 ///////////////////////////////////////////////////////////

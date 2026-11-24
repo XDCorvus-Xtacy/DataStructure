@@ -209,3 +209,34 @@ void BTree::printLeaves()
 }
 
 ///////////////////////////////////////////////////////////
+void BTree::rangeQuery(int low, int high)
+{
+    // 1. low가 있을 리프까지 내려가기 (search와 같은 규칙)
+    BTreeNode* node = root;
+    while (!node->isLeaf)
+    {
+        size_t i = 0;
+        while (i < node->keys.size() && low >= node->keys[i])
+            i++;
+        node = node->children[i];
+    }
+
+    // 2. 리프를 따라 옆으로 걸으며 값 하나씩 확인
+    while (node != nullptr)
+    {
+        for (int k : node->keys)
+        {
+            if (k > high)          // 끝 값을 넘으면 즉시 종료
+            {
+                std::cout << std::endl;
+                return;
+            }
+            if (k >= low)          // 범위 안이면 출력
+                std::cout << k << " ";
+        }
+        node = node->next;         // 다음 리프로
+    }
+    std::cout << std::endl;        // 마지막 리프까지 다 본 경우
+}
+
+///////////////////////////////////////////////////////////

@@ -18,5 +18,9 @@ int main()
     std::cout << "search(55): " << tree.search(55) << std::endl;
 
     tree.printLeaves();
+
+    tree.rangeQuery(20, 40);
+    tree.rangeQuery(25, 60);
+    
     return 0;
 }
